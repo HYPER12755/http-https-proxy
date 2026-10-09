@@ -1,9 +1,13 @@
-#!/bin/bash
-# Self-healing wrapper for the bore tunnel to bore.pub
-cd /home/ubuntu/sandbox/proxy
+#!/usr/bin/env bash
+# Self-healing bore tunnel: tunnels local :1275 to a public port on bore.pub.
+# Output (stdout/stderr + restart notices) is captured by the launcher to bore.log.
+cd "$(dirname "$0")"
+
+: "${BORE_SERVER:=bore.pub}"
+: "${BORE_PORT:=29001}"   # pinned public port (stable endpoint)
+
 while true; do
-  : > /tmp/bore.log
-  bore local 1275 --to bore.pub --port 29001 2>&1 | tee -a /tmp/bore.log
-  echo "[`date -u +%H:%M:%S`] bore exited, restarting in 2s" >&2
+  bore local 1275 --to "$BORE_SERVER" --port "$BORE_PORT"
+  echo "[$(date -u +%H:%M:%S)] bore exited rc=$?, restarting in 2s"
   sleep 2
 done

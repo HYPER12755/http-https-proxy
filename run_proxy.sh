@@ -1,8 +1,12 @@
-#!/bin/bash
-# Self-healing wrapper for the Go forward proxy on :1275
-cd /home/ubuntu/sandbox/proxy
+#!/usr/bin/env bash
+# Self-healing forward proxy on :1275.
+# Output (stdout/stderr + restart notices) is captured by start.sh -> proxy.log.
+cd "$(dirname "$0")"
+
+PROXY_BIN="$(cd "$(dirname "$0")" && pwd)/proxy"
+
 while true; do
-  ./proxy
-  echo "[`date -u +%H:%M:%S`] proxy exited (rc=$?), restarting in 2s" >&2
+  "$PROXY_BIN"
+  echo "[$(date -u +%H:%M:%S)] proxy exited rc=$?, restarting in 2s"
   sleep 2
 done
